@@ -8,13 +8,11 @@
 #include <linux/i2c-dev.h>
 
 #define CLOCK_DEV "/dev/clock_drv"
-
-
 #define I2C_DEV "/dev/i2c-1"
 #define OLED_I2C_ADDR 0x3C
-
 #define OLED_W 128
 #define OLED_H 64
+
 static uint8_t fb[OLED_W * OLED_H / 8];
 
 static int i2c_fd = -1;
@@ -86,7 +84,6 @@ static void oled_flush(void) {
     oled_data_chunk(fb, sizeof(fb));
 }
 
-
 static void fb_clear(void) { memset(fb, 0, sizeof(fb)); }
 
 static void fb_set_px(int x, int y, int on) {
@@ -104,8 +101,8 @@ static const uint8_t font5x7_digits[][5] = {
     {0x3C,0x4A,0x49,0x49,0x30},{0x01,0x71,0x09,0x05,0x03},
     {0x36,0x49,0x49,0x49,0x36},{0x06,0x49,0x49,0x29,0x1E}
 };
-static const uint8_t font_colon[5] = {0x00,0x36,0x36,0x00,0x00};
 
+static const uint8_t font_colon[5] = {0x00,0x36,0x36,0x00,0x00};
 static const uint8_t font_E[5]={0x7F,0x49,0x49,0x49,0x41};
 static const uint8_t font_D[5]={0x7F,0x41,0x41,0x22,0x1C};
 static const uint8_t font_I[5]={0x00,0x41,0x7F,0x41,0x00};
@@ -121,9 +118,6 @@ static const uint8_t font_G[5]={0x3E,0x41,0x41,0x51,0x32};
 static const uint8_t font_P[5]={0x7F,0x09,0x09,0x09,0x06};
 static const uint8_t font_A[5]={0x7E,0x09,0x09,0x09,0x7E};
 static const uint8_t font_B[5]={0x7F,0x49,0x49,0x49,0x36};
-
-
-
 
 static const uint8_t font_a[5]={0x20,0x54,0x54,0x54,0x78};
 static const uint8_t font_c[5]={0x38,0x44,0x44,0x44,0x20};
@@ -143,13 +137,11 @@ static const uint8_t font_t[5]={0x04,0x3F,0x44,0x40,0x20};
 static const uint8_t font_u[5]={0x3C,0x40,0x40,0x20,0x7C};
 static const uint8_t font_w[5]={0x3C,0x40,0x30,0x40,0x3C};
 static const uint8_t font_y[5]={0x0C,0x50,0x50,0x50,0x3C};
-static const uint8_t font_space[5] = {0,0,0,0,0};
 
+static const uint8_t font_space[5] = {0,0,0,0,0};
 static const uint8_t font_percent[5] = {0x23, 0x13, 0x08, 0x64, 0x62};
 static const uint8_t font_deg[5] = {0x06, 0x09, 0x09, 0x06, 0x00};
 static const uint8_t font_dot[5] = {0x00,0x60,0x60,0x00,0x00};
-
-
 static const uint8_t icon_good[8]   = { 0x3C,0x42,0xA5,0x81,0xA5,0x99,0x42,0x3C };
 static const uint8_t icon_Mild[8] = { 0x3C,0x42,0xA5,0x81,0xBD,0x81,0x42,0x3C };
 static const uint8_t icon_bad[8]    = { 0x3C,0x42,0xA5,0x81,0x99,0xA5,0x42,0x3C };
@@ -164,7 +156,6 @@ static const uint8_t* glyph_for_char(char c) {
     if (c=='N') return font_N; if (c=='W') return font_W; if (c=='H') return font_H;
     if (c=='M') return font_M; if (c=='S') return font_S; if (c=='G') return font_G;
     if (c=='P') return font_P; if (c=='A') return font_A; if (c=='B') return font_B;
-
 
     if (c=='a') return font_a; if (c=='c') return font_c; if (c=='d') return font_d;
     if (c=='e') return font_e; if (c=='g') return font_g; if (c=='h') return font_h;
@@ -242,6 +233,7 @@ static void fb_draw_circle(int cx,int cy,int r,int filled){
         }
     }
 }
+
 static void draw_page_dots(int page){
     int cy=60,r=3;
     int cx1=OLED_W/2-15;
@@ -301,14 +293,14 @@ int main(void) {
 
         fb_clear();
         draw_page_dots(page);
-
         
         if (page==0) {
-            if (strcmp(mode,"EDIT")==0)
+            if (strcmp(mode,"EDIT")==0) {
                 fb_draw_text(0,0,"EDIT",1,1);
-            else
+            } else {
                 fb_draw_text(0,0,"RUN",1,1);
-
+            }
+            
             if (strcmp(mode,"EDIT")==0) {
                 char hs[3], ms[3], ss_s[3];
                 sprintf(hs,"%02d",hh);
@@ -325,10 +317,7 @@ int main(void) {
                 sprintf(ts,"%02d:%02d:%02d",hh,mm,ss);
                 fb_draw_text(10,18,ts,2,2);
             }
-        }
-
-        
-        else if (page==1) {
+        } else if (page==1) {
             const int num_x=92;
 
             fb_draw_text(0,0,"Today Weather",1,1);
@@ -337,28 +326,31 @@ int main(void) {
 
             char tstr[8], hstr[8];
             
-            if (cur_temp >= 0) sprintf(tstr,"%02d",cur_temp);
-            else strcpy(tstr,"--");
-
-            if (cur_hum >= 0) sprintf(hstr,"%02d",cur_hum);
-            else strcpy(hstr,"--");
-
+            if (cur_temp >= 0) {
+                sprintf(tstr,"%02d",cur_temp);
+            } else {
+                strcpy(tstr,"--");
+            }
+            
+            if (cur_hum >= 0) {
+                sprintf(hstr,"%02d",cur_hum);
+            } else {
+                strcpy(hstr,"--");
+            }
+            
             fb_draw_text(num_x,16,tstr,2,2);
             fb_draw_text(num_x+22,16,"\xB0",1,1);   
             fb_draw_text(num_x+30,16,"C",1,1);      
 
             fb_draw_text(num_x,34,hstr,2,2);
             fb_draw_text(num_x+24,34,"%",1,1);     
-        }
-
-        
-        else {
+        } else {
             int di=-1;
-            if (cur_temp >= 0 && cur_hum >= 0)
+            if (cur_temp >= 0 && cur_hum >= 0) {
                 di = (int)(0.81*cur_temp + 0.01*cur_hum*(0.99*cur_temp-14.3) + 46.3);
+            }
 
             fb_draw_text(0,0,"DI PAGE",1,1);
-
 
             char di_str[8];
             if (di>=0) sprintf(di_str,"%02d",di);
@@ -367,33 +359,28 @@ int main(void) {
             fb_draw_text(0,20,"DI:",2,2);        
             fb_draw_text(40,20,di_str,2,2);    
 
-        if (di >= 0) {
-            int led = di_to_led(di);
-            set_led_level(led);
+            if (di >= 0) {
+                int led = di_to_led(di);
+                set_led_level(led);
+            }
+    
+            if (di < 0) {
+                fb_draw_text(40,14,"--",2,2);
+                fb_draw_text(0,36,"No Data",2,2);
+            } else if (di < 68) {
+                fb_draw_icon8(90,20,icon_good,2);
+                fb_draw_text(0,36,"Good",2,2);
+            } else if (di < 75) {
+                fb_draw_icon8(90,20,icon_Mild,2);
+                fb_draw_text(0,36,"Mild",2,2);
+            } else if (di < 80) {
+                fb_draw_icon8(90,20,icon_bad,2);
+                fb_draw_text(0,36,"Bad",2,2);
+            } else {
+                fb_draw_icon8(90,20,icon_hot,2);
+                fb_draw_text(0,36,"Hot",2,2);
+            }
         }
-
-        if (di < 0) {
-            fb_draw_text(40,14,"--",2,2);
-            fb_draw_text(0,36,"No Data",2,2);
-        }
-        else if (di < 68) {
-            fb_draw_icon8(90,20,icon_good,2);
-            fb_draw_text(0,36,"Good",2,2);
-        }
-        else if (di < 75) {
-            fb_draw_icon8(90,20,icon_Mild,2);
-            fb_draw_text(0,36,"Mild",2,2);
-        }
-        else if (di < 80) {
-            fb_draw_icon8(90,20,icon_bad,2);
-            fb_draw_text(0,36,"Bad",2,2);
-        }
-        else {
-            fb_draw_icon8(90,20,icon_hot,2);
-            fb_draw_text(0,36,"Hot",2,2);
-        }
-
-    }
 
         oled_flush();
         blink = !blink;
