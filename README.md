@@ -1,12 +1,11 @@
 # Linux Kernel Driver 기반 스마트 기상 시계 & 불쾌지수 측정기
-> **Linux Kernel Device Driver Project (Intel AI SW 8기)**
 
 본 프로젝트는 리눅스 커널 드라이버를 직접 설계하여 하드웨어를 제어하고, 실시간 시계(RTC), 온습도 데이터 처리 및 불쾌지수(THI) 시각화를 구현한 임베디드 시스템 프로젝트입니다.
 
 ---
 
 ## 프로젝트 개요
-단순히 라이브러리를 사용하는 수준을 넘어, **커널 공간(Kernel Space)**에서 직접 GPIO 인터럽트를 핸들링하고 디바이스 드라이버를 작성하여 **유저 공간(User Space)** 애플리케이션과 데이터를 주고받는 전체 프로세스를 구현했습니다.
+단순히 라이브러리를 사용하는 수준을 넘어, 커널 공간에서 직접 GPIO 인터럽트를 핸들링하고 디바이스 드라이버를 작성하여 유저 공간 애플리케이션과 데이터를 주고받는 전체 프로세스를 구현했습니다.
 
 ## 주요 하드웨어 구성
 - **Main Board:** Raspberry Pi 4 (64-bit Kernel)
@@ -45,9 +44,6 @@
    ```
 2. **애플리케이션 실행**
    ```
-   gcc -o app application.c
-   sudo ./app
+   gcc -o application application.c
+   sudo ./application
    ```
-3. **팀원**
-   김동현, 서채건, 박서정
-   
