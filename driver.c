@@ -1,4 +1,3 @@
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -17,18 +16,13 @@
 #define DRIVER_NAME "clock_drv"
 #define CLASS_NAME  "clock_drv_class"
 
-
 #define DS_RST   17
 #define DS_DAT   4
 #define DS_SCLK  22
-
 #define ENC_S1   24
 #define ENC_S2   25
 #define ENC_SW   26
-
 #define DHT_GPIO 23
-
-
 #define LED0  5
 #define LED1  6
 #define LED2  12
@@ -110,8 +104,15 @@ static u8 ds_read_byte(void)
     return v;
 }
 
-static inline int bcd2int(u8 b) { return (b & 0x0F) + ((b >> 4) & 0x0F) * 10; }
-static inline u8  int2bcd(int v){ return (u8)(((v/10) << 4) | (v%10)); }
+static inline int bcd2int(u8 b)
+{
+    return (b & 0x0F) + ((b >> 4) & 0x0F) * 10;
+}
+
+static inline u8 int2bcd(int v)
+{
+    return (u8)(((v/10) << 4) | (v%10));
+}
 
 static void ds1302_read_time(struct rtc_simple *t)
 {
@@ -176,7 +177,6 @@ static const char *field_name(int f)
     return "SEC";
 }
 
-
 static int dht_wait_level(int level, int timeout_us)
 {
     int i;
@@ -239,9 +239,9 @@ static int dht11_read_once(int *out_temp, int *out_hum)
     *out_temp = data[2];
     return 0;
 
-err:
-    local_irq_restore(flags);
-    return -ETIMEDOUT;
+    err:
+        local_irq_restore(flags);
+        return -ETIMEDOUT;
 }
 
 static void dht11_get_cached(int *out_temp, int *out_hum)
@@ -328,8 +328,6 @@ static void page_toggle_if_cw_locked(void)
     last_page_switch_j = now;
 }
 
-
-
 static irqreturn_t s1_irq_handler(int irq, void *dev_id)
 {
     unsigned long now = jiffies;
@@ -389,7 +387,6 @@ static void set_led_level(int level)
     }
 }
 
-
 static ssize_t dev_read(struct file *f, char __user *ubuf, size_t cnt, loff_t *ppos)
 {
     char kbuf[160];
@@ -427,8 +424,7 @@ static ssize_t dev_read(struct file *f, char __user *ubuf, size_t cnt, loff_t *p
     return len;
 }
 
-static ssize_t dev_write(struct file *f, const char __user *ubuf,
-                         size_t cnt, loff_t *ppos)
+static ssize_t dev_write(struct file *f, const char __user *ubuf, size_t cnt, loff_t *ppos)
 {
     char kbuf[64];
     int hh, mm, ss;
@@ -555,20 +551,21 @@ static int __init mod_init(void)
     mutex_unlock(&lock0);
 
     printk(KERN_INFO "OK: DHT cached every %d ms\n", DHT_CACHE_MS);
+
     return 0;
 
-err_gpio:
-    gpio_free(DHT_GPIO);
-    gpio_free(ENC_SW); gpio_free(ENC_S2); gpio_free(ENC_S1);
-    gpio_free(DS_SCLK); gpio_free(DS_DAT); gpio_free(DS_RST);
-err_dev:
-    device_destroy(cls,devno);
-    class_destroy(cls);
-err_cdev:
-    cdev_del(&cdev0);
-err_chr:
-    unregister_chrdev_region(devno,1);
-    return ret;
+    err_gpio:
+        gpio_free(DHT_GPIO);
+        gpio_free(ENC_SW); gpio_free(ENC_S2); gpio_free(ENC_S1);
+        gpio_free(DS_SCLK); gpio_free(DS_DAT); gpio_free(DS_RST);
+    err_dev:
+        device_destroy(cls,devno);
+        class_destroy(cls);
+    err_cdev:
+        cdev_del(&cdev0);
+    err_chr:
+        unregister_chrdev_region(devno,1);
+        return ret;
 }
 
 static void __exit mod_exit(void)
